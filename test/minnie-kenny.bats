@@ -19,13 +19,13 @@ setup() {
 
   # (Re-)Create a temporary git directory
   mkdir -p "${minnie_kenny_test_dir}"
-  pushd "${minnie_kenny_test_dir}" || exit 1
+  pushd "${minnie_kenny_test_dir}" >/dev/null || exit 1
   rm -rf .git minnie-kenny.gitconfig
   git init >/dev/null 2>&1
   git config user.email "minnie-kenny-test@example.com"
   git config user.name "minnie-kenny-test"
   touch minnie-kenny.gitconfig
-  popd || exit 1
+  popd >/dev/null || exit 1
   export GIT_DIR="${minnie_kenny_test_dir}/.git"
 
   # The absolute path to the git directory

@@ -15,16 +15,16 @@ case "${minnie_kenny_test_type}" in
     if [[ "${TRAVIS:-}" == "true" ]]; then
       set -x
       git clone https://github.com/bats-core/bats-core.git
-      pushd bats-core
+      pushd bats-core >/dev/null
       git checkout "${minnie_kenny_bats_core_commit}"
       ./install.sh "${HOME}"
       export PATH="${PATH}:${HOME}/bin"
-      popd
+      popd >/dev/null
       git clone https://github.com/awslabs/git-secrets.git
-      pushd git-secrets
+      pushd git-secrets >/dev/null
       git checkout "${minnie_kenny_git_secrets_commit}"
       export PATH="${PATH}:${PWD}"
-      popd
+      popd >/dev/null
       set +x
     fi
     bats --tap test/
@@ -109,9 +109,15 @@ case "${minnie_kenny_test_type}" in
         apt-get update && apt-get install -y git make && \
         mkdir -p /git && \
         git clone https://github.com/bats-core/bats-core.git /git/bats-core && \
-        pushd /git/bats-core && git checkout '${minnie_kenny_bats_core_commit}' && ./install.sh /usr/local && popd && \
+        pushd /git/bats-core >/dev/null && \
+        git checkout '${minnie_kenny_bats_core_commit}' && \
+        ./install.sh /usr/local && \
+        popd >/dev/null && \
         git clone https://github.com/awslabs/git-secrets.git /git/git-secrets && \
-        pushd /git/git-secrets && git checkout '${minnie_kenny_git_secrets_commit}' && make install && popd && \
+        pushd /git/git-secrets >/dev/null && \
+        git checkout '${minnie_kenny_git_secrets_commit}' && \
+        make install && \
+        popd >/dev/null && \
         chmod a+rwx /usr/bin && \
         chmod a+rwx /usr/local/bin && \
         useradd --uid $(id -u "${USER}") --no-log-init --no-create-home '${USER}'\"]

@@ -91,7 +91,7 @@ If you have not already added `git secrets` to your CI, example `bash` installat
 git clone https://github.com/awslabs/git-secrets.git
 
 # Change directories to the git secrets directory
-pushd git-secrets
+pushd git-secrets >/dev/null
 
 # Checkout whatever version you'd like
 git checkout 1.3.0
@@ -100,7 +100,7 @@ git checkout 1.3.0
 export PATH="${PATH}:${PWD}"
 
 # Change back to the previous working directory
-popd
+popd >/dev/null
 
 # Continue running your tests...
 ```
