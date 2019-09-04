@@ -1,3 +1,3 @@
 # v0.1.0
 
-Initial version. (TODO: link to PR)
+First version of minnie-kenny.sh [(#1)](https://github.com/broadinstitute/minnie-kenny/pull/1)
