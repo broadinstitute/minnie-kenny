@@ -4,7 +4,7 @@
 Usage:
     minnie-kenny.sh
     -f | --force                Modify the git config to run git secrets
-    -n | --no-force             Do not modify the git config only verify installation
+    -n | --no-force             Do not modify the git config, only verify installation
     -s | --strict               Require git-secrets to be setup or fail
     -q | --quiet                Do not output any status messages
     -i | --include=FILE         Path to the include for git-config (default: "minnie-kenny.gitconfig")

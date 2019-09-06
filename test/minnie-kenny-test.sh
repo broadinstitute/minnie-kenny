@@ -71,17 +71,28 @@ case "${minnie_kenny_test_type}" in
   alpine)
     # Ensure minnie-kenny.sh executes without error on /bin/sh even if git-secrets requires /bin/bash
     docker run \
-      --rm \
+      --tty --rm \
       --volume "${PWD}/minnie-kenny.sh:/usr/local/bin/minnie-kenny.sh" \
       alpine \
       sh -c "
         set -ex
         mkdir /src
         cd /src
+        # first test on sh without bash
         touch minnie-kenny.gitconfig
         minnie-kenny.sh
         apk --update add git
         minnie-kenny.sh
+        git clone https://github.com/awslabs/git-secrets.git
+        cd git-secrets >/dev/null
+        git checkout \"${minnie_kenny_git_secrets_commit}\"
+        export PATH=\"\${PATH}:\${PWD}\"
+        cd ..
+        git init
+        # start testing with bash
+        # add ncurses for tput (not required, just prevents a warning from git-secrets)
+        apk --update add bash ncurses
+        minnie-kenny.sh --force
         echo alpine tests passed!
       "
     ;;
@@ -93,7 +104,7 @@ case "${minnie_kenny_test_type}" in
     minnie_kenny_temp_dir="${minnie_kenny_test_dir}/tmp"
     minnie_kenny_kcov_out="${minnie_kenny_temp_dir}/kcov.out"
     minnie_kenny_bats_out="${minnie_kenny_temp_dir}/bats.out"
-    # Use `tee` as `kcov` seems to send the `bats` stdout to... nowhere? Haven't found a existing git issue yet.
+    # Use `tee` as `kcov` seems to send the `bats` stdout to... nowhere? Haven't found an existing git issue yet.
     minnie_kenny_bats_tee="${minnie_kenny_temp_dir}/bats-tee.sh"
     minnie_kenny_coverage_dir="${minnie_kenny_temp_dir}/coverage"
     minnie_kenny_coverage_tag="broadinstitute/minnie-kenny-coverage:temp"

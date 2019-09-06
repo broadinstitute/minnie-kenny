@@ -18,7 +18,7 @@ Example `minnie-kenny.gitconfig`:
     patterns = (\"|')?(AWS|aws|Aws)?_?(ACCOUNT|account|Account)_?(ID|id|Id)?(\"|')?\\s*(:|=>|=)\\s*(\"|')?[0-9]{4}\\-?[0-9]{4}\\-?[0-9]{4}(\"|')?
     allowed = AKIAIOSFODNN7EXAMPLE
     allowed = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-    # NOTE: The above example is the equivalent of `git secrets --register-aws`. Futher customize for your own git repo.
+    # NOTE: The above example is the equivalent of `git secrets --register-aws`. Customize for your own git repo.
 ```
 
 Additional secret configuration may be appended to the file. The command `git secrets --add` and

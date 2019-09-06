@@ -36,7 +36,7 @@ setup() {
 Usage:
     minnie-kenny.sh
     -f | --force                Modify the git config to run git secrets
-    -n | --no-force             Do not modify the git config only verify installation
+    -n | --no-force             Do not modify the git config, only verify installation
     -s | --strict               Require git-secrets to be setup or fail
     -q | --quiet                Do not output any status messages
     -i | --include=FILE         Path to the include for git-config (default: \"minnie-kenny.gitconfig\")"
@@ -195,13 +195,13 @@ ${minnie_kenny_git_dir}/hooks and consider running \`git secrets --install --for
 @test "running without an argument for -i fails" {
   run_test -i
   [ "${status}" -eq 1 ]
-  [ "${output}" = "Error: you need to provide an include file.${minnie_kenny_message_usage}" ]
+  [ "${output}" = "Error: you need to provide a git-config include file.${minnie_kenny_message_usage}" ]
 }
 
 @test "running without an argument for --include= fails" {
   run_test --include=
   [ "${status}" -eq 1 ]
-  [ "${output}" = "Error: you need to provide an include file.${minnie_kenny_message_usage}" ]
+  [ "${output}" = "Error: you need to provide a git-config include file.${minnie_kenny_message_usage}" ]
 }
 
 @test "running with an invalid argument fails" {
