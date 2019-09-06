@@ -5,9 +5,9 @@
 # - Run as a non-root user, as kcov plus bats did not produce output when run with `--bash-method=DEBUG`
 #
 # Hints:
-# https://github.com/particleflux/kcov-bats-circleci-codeclimate/blob/5f14e0d/tests/hello.bats
-# https://github.com/bats-core/bats-core/issues/15
-# https://github.com/SimonKagstrom/kcov/issues/234#issuecomment-363013297
+# - https://github.com/particleflux/kcov-bats-circleci-codeclimate/blob/5f14e0d/tests/hello.bats
+# - https://github.com/bats-core/bats-core/issues/15
+# - https://github.com/SimonKagstrom/kcov/issues/234#issuecomment-363013297
 run_test() {
   run bash "${BATS_TEST_DIRNAME}/../minnie-kenny.sh" "$@"
 }
@@ -44,7 +44,7 @@ Usage:
   # The minnie kenny usage message with a leading newline
   minnie_kenny_message_usage=$'\n'"${minnie_kenny_message_usage_trimmed}"
 
-  # The formatted check mark at the beginning of the install message
+  # The formatted check mark at the beginning of the `git secrets --install` output messages
   minnie_kenny_check_mark="$(tput setaf 2)✓$(tput sgr 0)"
 
   # The minnie kenny installation message
@@ -96,10 +96,22 @@ skip_test_if_not_docker() {
   [ "${output}" = "${minnie_kenny_message_force}" ]
 }
 
+@test "running with no git-secrets hooks and quiet fails" {
+  run_test -q
+  [ "${status}" -eq 1 ]
+  [ "${output}" = "" ]
+}
+
 @test "running with no git-secrets hooks and force succeeds" {
   run_test -f
   [ "${status}" -eq 0 ]
   [ "${output}" = "${minnie_kenny_message_installed}" ]
+}
+
+@test "running with no git-secrets hooks, force, and quiet succeeds" {
+  run_test -f -q
+  [ "${status}" -eq 0 ]
+  [ "${output}" = "" ]
 }
 
 @test "running with all git-secrets hooks succeeds" {
@@ -145,6 +157,13 @@ ${minnie_kenny_git_dir}/hooks and consider running \`git secrets --install --for
   [ "${output}" = "${expected}" ]
 }
 
+@test "running without a minnie-kenny.gitconfig and quiet fails" {
+  rm "${minnie_kenny_test_dir}/minnie-kenny.gitconfig"
+  run_test -q
+  [ "${status}" -eq 1 ]
+  [ "${output}" = "" ]
+}
+
 @test "running with a made up include fails" {
   run_test -i "made-up"
   [ "${status}" -eq 1 ]
@@ -186,10 +205,22 @@ ${minnie_kenny_git_dir}/hooks and consider running \`git secrets --install --for
   [ "${output}" = "${minnie_kenny_message_installed}" ]
 }
 
+@test "running with no force then force and quiet succeeds" {
+  run_test -n -f -q
+  [ "${status}" -eq 0 ]
+  [ "${output}" = "" ]
+}
+
 @test "running with force then no force fails" {
   run_test -f -n
   [ "${status}" -eq 1 ]
   [ "${output}" = "${minnie_kenny_message_force}" ]
+}
+
+@test "running with force then no force and quiet fails" {
+  run_test -f -n -q
+  [ "${status}" -eq 1 ]
+  [ "${output}" = "" ]
 }
 
 @test "running without an argument for -i fails" {
@@ -208,6 +239,18 @@ ${minnie_kenny_git_dir}/hooks and consider running \`git secrets --install --for
   run_test --foo
   [ "${status}" -eq 1 ]
   [ "${output}" = "Unknown argument: --foo${minnie_kenny_message_usage}" ]
+}
+
+@test "running with an invalid argument then quiet fails" {
+  run_test --foo -q
+  [ "${status}" -eq 1 ]
+  [ "${output}" = "Unknown argument: --foo${minnie_kenny_message_usage}" ]
+}
+
+@test "running with quiet then an invalid argument fails" {
+  run_test -q --foo
+  [ "${status}" -eq 1 ]
+  [ "${output}" = "" ]
 }
 
 @test "running when git is not installed succeeds" {
@@ -230,18 +273,38 @@ ${minnie_kenny_git_dir}/hooks and consider running \`git secrets --install --for
   [ "${output}" = "Error: \`git\` not found." ]
 }
 
+@test "running when git is not installed, strict, and quiet fails" {
+  skip_test_if_not_docker
+  git_path="$(command -v git)"
+  mv "${git_path}" "${git_path}.bak"
+  run_test -s -q
+  mv "${git_path}.bak" "${git_path}"
+  [ "${status}" -eq 1 ]
+  [ "${output}" = "" ]
+}
+
 @test "running when git-secrets is not installed fails" {
   skip_test_if_not_docker
   git_secrets_path="$(command -v git-secrets)"
   mv "${git_secrets_path}" "${git_secrets_path}.bak"
   run_test -f
   mv "${git_secrets_path}.bak" "${git_secrets_path}"
+  [ "${status}" -eq 1 ]
   expected="\
 \`git-secrets\` was not found while \`git\` was found. \
 \`git-secrets\` must be installed first before using minnie-kenny.sh. \
 See https://github.com/awslabs/git-secrets#installing-git-secrets"
-  [ "${status}" -eq 1 ]
   [ "${output}" = "${expected}" ]
+}
+
+@test "running when git-secrets is not installed and quiet fails" {
+  skip_test_if_not_docker
+  git_secrets_path="$(command -v git-secrets)"
+  mv "${git_secrets_path}" "${git_secrets_path}.bak"
+  run_test -f -q
+  mv "${git_secrets_path}.bak" "${git_secrets_path}"
+  [ "${status}" -eq 1 ]
+  [ "${output}" = "" ]
 }
 
 @test "committing secrets with an empty minnie-kenny.gitconfig succeeds" {
