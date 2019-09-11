@@ -10,6 +10,8 @@ matrix:
     - os: linux
       env: MINNIE_KENNY_TEST_TYPE=coverage
     - os: linux
+      env: MINNIE_KENNY_TEST_TYPE=git2010
+    - os: linux
       env: MINNIE_KENNY_TEST_TYPE=alpine
     - os: linux
       env: MINNIE_KENNY_TEST_TYPE=lint

@@ -75,7 +75,7 @@ case "${minnie_kenny_test_type}" in
       --volume "${PWD}/minnie-kenny.sh:/usr/local/bin/minnie-kenny.sh" \
       alpine \
       sh -c "
-        set -ex
+        set -eux
         mkdir /src
         cd /src
         # first test on sh without bash
@@ -84,7 +84,7 @@ case "${minnie_kenny_test_type}" in
         apk --update add git
         minnie-kenny.sh
         git clone https://github.com/awslabs/git-secrets.git
-        cd git-secrets >/dev/null
+        cd git-secrets
         git checkout \"${minnie_kenny_git_secrets_commit}\"
         export PATH=\"\${PATH}:\${PWD}\"
         cd ..
@@ -94,6 +94,45 @@ case "${minnie_kenny_test_type}" in
         apk --update add bash ncurses
         minnie-kenny.sh --force
         echo alpine tests passed!
+      "
+    ;;
+
+  git2010)
+    # Ensure minnie-kenny.sh executes on a 2010 version of git
+    docker run \
+      --tty --rm \
+      --volume "${PWD}/minnie-kenny.sh:/usr/local/bin/minnie-kenny.sh" \
+      ubuntu:16.04 \
+      bash -c "
+        set -euxo pipefail
+        mkdir /src
+        cd /src
+        touch minnie-kenny.gitconfig
+        # install git from May 2010
+        echo 'deb http://snapshot.debian.org/archive/debian/20100501/ sid main' \
+          > /etc/apt/sources.list.d/snapshot.list
+        printf \"Package: r-*\\nPin: origin snapshot.debian.org\\nPin-Priority: 990\\n\" \
+          > /etc/apt/preferences.d/snapshot
+        apt-get \
+          --allow-insecure-repositories \
+          --allow-unauthenticated \
+          -o Acquire::Check-Valid-Until=false \
+          update
+        # apt-get the dependencies for the old git
+        apt-get install -y libcurl3-gnutls libexpat1
+        # apt-get download then dpkg to get around installing perl dependencies
+        apt-cache policy git
+        apt-get download --allow-unauthenticated git=1:1.7.1-1
+        dpkg --force-all -i git_1%3a1.7.1-1_amd64.deb
+        minnie-kenny.sh
+        git clone https://github.com/awslabs/git-secrets.git
+        pushd git-secrets >/dev/null
+        git checkout \"${minnie_kenny_git_secrets_commit}\"
+        export PATH=\"\${PATH}:\${PWD}\"
+        popd >/dev/null
+        git init
+        minnie-kenny.sh --force
+        echo git2010 tests passed!
       "
     ;;
 
@@ -165,7 +204,7 @@ case "${minnie_kenny_test_type}" in
 
   *)
     echo "Unknown test mode '${minnie_kenny_test_type}'." \
-      "Expected one of [ clean | bats | coverage | alpine | lint ]." 1>&2
+      "Expected one of [ clean | bats | coverage | alpine | git2010 | lint ]." 1>&2
     exit 1
     ;;
 esac

@@ -29,7 +29,7 @@ setup() {
   export GIT_DIR="${minnie_kenny_test_dir}/.git"
 
   # The absolute path to the git directory
-  minnie_kenny_git_dir="$(git rev-parse --absolute-git-dir)"
+  minnie_kenny_git_dir="$(cd "$(git rev-parse --git-dir)" && pwd)"
 
   # The minnie kenny usage message without a leading newline
   minnie_kenny_message_usage_trimmed="\
