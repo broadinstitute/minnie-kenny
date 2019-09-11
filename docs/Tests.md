@@ -38,6 +38,18 @@ A Docker image will be built with all of the requirements to run all of the `bat
 will then run inside of a temporary Docker container. The results may be viewed by opening
 `test/tmp/coverage/index.html` in your browser.
 
+## git2010
+
+This tests that older versions of git will run `minnie-kenny.sh`.
+
+This test requires that your system has installed:
+
+- [`docker`](https://www.docker.com)
+
+```bash
+test/minnie-kenny-test.sh git2010
+```
+
 ## alpine
 
 This tests that even if `git secrets` requires `bash` that `minnie-kenny.sh` will run on a system without `bash`
