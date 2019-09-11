@@ -121,7 +121,6 @@ case "${minnie_kenny_test_type}" in
         # apt-get the dependencies for the old git
         apt-get install -y libcurl3-gnutls libexpat1
         # apt-get download then dpkg to get around installing perl dependencies
-        apt-cache policy git
         apt-get download --allow-unauthenticated git=1:1.7.1-1
         dpkg --force-all -i git_1%3a1.7.1-1_amd64.deb
         minnie-kenny.sh
