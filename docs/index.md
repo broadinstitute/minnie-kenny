@@ -11,7 +11,7 @@ What `minnie-kenny.sh` does:
 
 - Enables prohibited and allowed `git secrets` patterns to be version controlled in git
 - Anyone running your tests who has `git` installed will also test that `git secrets` is installed
-- Once `minnie-kenny.sh` completes the `git secrets` configuration once all future `git commits` are protected
+- After `minnie-kenny.sh` completes the `git secrets` configuration once, all future `git commits` will be protected
 
 What `minnie-kenny.sh` does not do:
 
